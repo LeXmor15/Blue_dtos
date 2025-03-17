@@ -1,5 +1,6 @@
 // src/context/ChatbotContext.tsx
 import { createContext, useState, useContext, ReactNode } from 'react';
+import { sendMessage as sendMessageToApi } from '../services/chatService';
 
 interface Message {
   id: string;
@@ -64,7 +65,7 @@ const ChatbotProvider = ({ children }: ChatbotProviderProps) => {
     setIsMinimized(true);
   };
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
     if (!text.trim()) return;
     
     // Agregar mensaje del usuario
@@ -77,38 +78,40 @@ const ChatbotProvider = ({ children }: ChatbotProviderProps) => {
     
     setMessages(prev => [...prev, userMessage]);
     
-    // Simular respuesta del bot después de un breve delay
-    setTimeout(() => {
+    try {
+      // Llamada al servicio para obtener la respuesta del bot
+      const botResponse = await sendMessageToApi(text);
+
+      // Agregar mensaje del bot
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: getRandomResponse(),
+        text: botResponse, // Respuesta obtenida de la API (ya es un string)
         sender: 'bot',
         timestamp: new Date(),
       };
-      
-      setMessages(prev => [...prev, botMessage]);
-    }, 1000);
-  };
 
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      console.error('Error al obtener la respuesta del bot:', error);
+
+      // Agregar mensaje de error del bot
+      const errorMessage: Message = {
+        id: (Date.now() + 2).toString(),
+        text: 'Lo siento, ocurrió un error al procesar tu solicitud.',
+        sender: 'bot',
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, errorMessage]);
+    }
+  };
+  
   const updatePosition = (x: number, y: number) => {
     setPosition({ x, y });
   };
 
-  // Respuestas simuladas del bot
-  const getRandomResponse = () => {
-    const responses = [
-      'Puedo ayudarte con eso. ¿Qué más necesitas?',
-      'Interesante pregunta. Déjame buscar más información al respecto.',
-      'En Boreal Security, nos especializamos en ese tipo de soluciones.',
-      '¿Has probado a revisar la documentación en nuestra web?',
-      '¿Necesitas más detalles sobre alguna función específica?',
-    ];
-    
-    return responses[Math.floor(Math.random() * responses.length)];
-  };
-
   return (
-    <ChatbotContext.Provider 
+    <ChatbotContext.Provider
       value={{
         isOpen,
         isMinimized,
@@ -126,8 +129,3 @@ const ChatbotProvider = ({ children }: ChatbotProviderProps) => {
 };
 
 export default ChatbotProvider;
-
-
-
-
-

@@ -1,0 +1,202 @@
+/* src/styles/calendar.css */
+
+/* Contenedor principal */
+.calendar-container {
+    background-color: #ffffff;
+    padding: 16px;
+    width: 100%;
+    max-width: 280px;
+    min-height: 330px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  /* Título de sección */
+  .calendar-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000000;
+    text-align: left;
+    margin-bottom: 5px;
+  }
+  
+  /* Fecha grande */
+  .current-date-display {
+    font-size: 24px;
+    font-weight: 500;
+    color: #000000;
+    text-align: center;
+    margin: 10px 0 15px 0;
+  }
+  
+  /* Contenedor del calendario */
+  .calendar-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  /* Calendario personalizado */
+  .custom-calendar {
+    border: none !important;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    background-color: transparent;
+    max-height: 280px;
+  }
+  
+  /* Quitar bordes y ajustar padding */
+  .react-calendar {
+    border: none;
+    line-height: 1.4;
+  }
+  
+  /* Navegación del calendario */
+  .react-calendar__navigation {
+    margin-bottom: 10px;
+  }
+  
+  /* Botones de navegación */
+  .react-calendar__navigation button {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 24px;
+    min-width: 36px;
+  }
+  
+  /* Título del mes en la navegación */
+  .react-calendar__navigation__label {
+    font-weight: normal;
+    font-size: 16px;
+    color: transparent !important;
+  }
+  
+  /* Cabecera días de la semana */
+  .react-calendar__month-view__weekdays {
+    font-size: 14px;
+    color: #888;
+    font-weight: normal;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  
+  .react-calendar__month-view__weekdays abbr {
+    text-decoration: none;
+    font-size: 12px;
+  }
+  
+  /* Celdas de días */
+  .react-calendar__tile {
+    padding: 10px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Quitar bordes de foco */
+  .react-calendar__tile:enabled:focus {
+    background-color: transparent;
+  }
+  
+  /* Días de otros meses */
+  .react-calendar__month-view__days__day--neighboringMonth {
+    color: #ccc;
+  }
+  
+  /* Día actual */
+  .react-calendar__tile--now {
+    background-color: transparent !important;
+    color: #fff !important;
+    position: relative;
+  }
+  
+  /* Día seleccionado - círculo azul */
+  .react-calendar__tile--active,
+  .react-calendar__tile--now {
+    background-color: #3b82f6 !important;
+    color: white !important;
+    border-radius: 50%;
+    font-weight: 500;
+  }
+  
+  /* Pequeño punto rojo en el día actual (5) */
+  .react-calendar__tile--now::after {
+    content: "";
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: #ff4d4d;
+    border-radius: 50%;
+  }
+  
+  /* Contenedor de servicios */
+  .services-boxes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+  }
+  
+  /* Caja de servicio */
+  .service-box {
+    padding: 12px 16px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 46px;
+  }
+  
+  /* Icono de servicio */
+  .service-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+  
+  .service-icon.green {
+    background-color: #4ade80;
+    color: white;
+  }
+  
+  .service-icon.yellow {
+    background-color: #facc15;
+    color: white;
+  }
+  
+  .service-icon.red {
+    background-color: #ef4444;
+    color: white;
+  }
+  
+  /* Descripción del servicio */
+  .service-subtext {
+    color: #9ca3af;
+    font-size: 14px;
+    font-weight: 400;
+    flex: 1;
+    text-align: center;
+  }
+  
+  /* Nombre del servicio */
+  .service-text {
+    color: #000000;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: right;
+    min-width: 45px;
+  }

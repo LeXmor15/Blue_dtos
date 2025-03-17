@@ -1,6 +1,8 @@
 // src/components/chatbot/ChatbotButton.tsx
 import { useState, useRef, useEffect } from 'react';
 import { useChatbot } from '../../context/ChatbotContext';
+// Importa tu SVG - ajusta la ruta según la ubicación de tu archivo
+import ChatbotIcon from '../../assets/Logo_Chatbot.svg';
 
 const ChatbotButton = () => {
   const { toggleChat, position, updatePosition } = useChatbot();
@@ -51,32 +53,31 @@ const ChatbotButton = () => {
   }, [isDragging]);
 
   return (
-    <div 
+    <div
       ref={buttonRef}
       className="fixed z-50 cursor-move"
-      style={{ 
-        left: `${position.x}px`, 
+      style={{
+        left: `${position.x}px`,
         top: `${position.y}px`,
         transform: 'translate(-50%, -50%)'
       }}
       onMouseDown={handleMouseDown}
       onTouchStart={() => {}}  // Necesario para soporte móvil
     >
-      <button 
-        className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105"
+      <button
+        className="w-22 h-22 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105"
         onClick={(e) => {
           // Prevenir que el clic para abrir el chat inicie un arrastre
           e.stopPropagation();
           toggleChat();
         }}
       >
-        <div className="text-white">
-          <div className="w-8 h-8 rounded-full overflow-hidden bg-white">
-            <div className="w-full h-full flex items-center justify-center bg-blue-600 text-white">
-              B
-            </div>
-          </div>
-        </div>
+        {/* Reemplaza el div circular con tu imagen SVG */}
+        <img 
+          src={ChatbotIcon} 
+          alt="Chatbot" 
+          className="w-full h-full rounded-full"
+        />
       </button>
     </div>
   );

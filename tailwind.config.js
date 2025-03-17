@@ -5,6 +5,14 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    screens: {
+      'xs': '320px',     // Extra pequeño (teléfonos pequeños)
+      'sm': '640px',     // Pequeño (tablets verticales y teléfonos grandes)
+      'md': '768px',     // Medio (tablets)
+      'lg': '1024px',    // Grande (desktop)
+      'xl': '1280px',    // Extra grande
+      '2xl': '1536px',   // 2X Extra grande
+    },
     extend: {
       colors: {
         primary: '#3b82f6',
