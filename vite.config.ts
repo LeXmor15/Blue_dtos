@@ -6,5 +6,10 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    
   ],
+  assetsInclude: ['**/*.json'],
+  json: {
+    stringify: true, // Esto permite importar JSON como módulos
+  },
 })

@@ -11,10 +11,10 @@ const MOCK_SECURITY_EVENTS = {
     { id: 5, status: 'red', flag: 'ru', ip: '45.76.83.43', country: 'Russia', protocol: 'SSH', date: '2024-11-05 10:31:25', port: 22, activity: 'Failed login attempt', severity: 'Critical', user: 'root' },
   ],
   lastEvents: [
-    { ip: '69.41.3.206', region: 'USA', time: '05:31:20 pm' },
-    { ip: '69.41.3.206', region: 'USA', time: '05:30:59 pm' },
-    { ip: '69.41.3.206', region: 'USA', time: '05:30:57 pm' },
-    { ip: '69.41.3.206', region: 'USA', time: '05:30:56 pm' },
+    { ip: '69.41.3.206', region: 'USA', time: '05:31:20 pm', countryCode: 'us' },
+    { ip: '69.41.3.206', region: 'USA', time: '05:30:59 pm', countryCode: 'us' },
+    { ip: '69.41.3.206', region: 'USA', time: '05:30:57 pm', countryCode: 'us' },
+    { ip: '69.41.3.206', region: 'USA', time: '05:30:56 pm', countryCode: 'us' },
   ]
 };
 
@@ -33,11 +33,50 @@ const MOCK_ACTIVITY_DATA = [
   { month: 'Dec', attacks: 60, sources: 50 },
 ];
 
+// Datos mock para eventos del calendario
+const MOCK_CALENDAR_EVENTS = [
+  { date: new Date(2024, 10, 1), count: 5 },
+  { date: new Date(2024, 10, 3), count: 8 },
+  { date: new Date(2024, 10, 5), count: 12 },
+  { date: new Date(2024, 10, 8), count: 7 },
+  { date: new Date(2024, 10, 11), count: 4 },
+  { date: new Date(2024, 10, 15), count: 9 },
+  { date: new Date(2024, 10, 18), count: 6 },
+  { date: new Date(2024, 10, 22), count: 10 },
+  { date: new Date(2024, 10, 25), count: 3 },
+  { date: new Date(2024, 10, 28), count: 7 },
+];
+
+// Mock para estadísticas diarias
+const MOCK_DAILY_STATS: { [key: string]: { totalAttacks: number; blockedAttacks: number; criticalAlerts: number; activeUsers: number } } = {
+  '2024-10-28': { totalAttacks: 35, blockedAttacks: 32, criticalAlerts: 3, activeUsers: 18 },
+  '2024-10-29': { totalAttacks: 28, blockedAttacks: 25, criticalAlerts: 2, activeUsers: 15 },
+  '2024-10-30': { totalAttacks: 42, blockedAttacks: 37, criticalAlerts: 5, activeUsers: 20 },
+  '2024-10-31': { totalAttacks: 37, blockedAttacks: 33, criticalAlerts: 4, activeUsers: 17 },
+  '2024-11-01': { totalAttacks: 31, blockedAttacks: 28, criticalAlerts: 2, activeUsers: 19 },
+  '2024-11-02': { totalAttacks: 25, blockedAttacks: 22, criticalAlerts: 1, activeUsers: 14 },
+  '2024-11-03': { totalAttacks: 18, blockedAttacks: 16, criticalAlerts: 0, activeUsers: 12 },
+  '2024-11-04': { totalAttacks: 33, blockedAttacks: 30, criticalAlerts: 2, activeUsers: 16 },
+  '2024-11-05': { totalAttacks: 47, blockedAttacks: 42, criticalAlerts: 5, activeUsers: 22 },
+  '2024-11-06': { totalAttacks: 39, blockedAttacks: 35, criticalAlerts: 3, activeUsers: 18 },
+  '2024-11-07': { totalAttacks: 28, blockedAttacks: 25, criticalAlerts: 1, activeUsers: 15 },
+  '2024-11-08': { totalAttacks: 36, blockedAttacks: 32, criticalAlerts: 4, activeUsers: 17 },
+  '2024-11-09': { totalAttacks: 24, blockedAttacks: 21, criticalAlerts: 1, activeUsers: 13 },
+  '2024-11-10': { totalAttacks: 19, blockedAttacks: 18, criticalAlerts: 0, activeUsers: 11 },
+};
+
 // Determinar si estamos usando datos simulados
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
 
 // Función para simular demora en desarrollo
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
+ * Formato de fecha para las claves en datos diarios
+ */
+const formatDateKey = (date: Date): string => {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+};
 
 /**
  * Obtiene los eventos de seguridad para mostrar en el dashboard
@@ -158,6 +197,59 @@ export const respondToEvent = async (eventId: number, action: string, params?: R
     return response.data;
   } catch (error) {
     console.error(`Error responding to event ID ${eventId}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Obtiene eventos para el calendario
+ */
+export const fetchCalendarEvents = async () => {
+  if (USE_MOCK) {
+    await delay(500);
+    return MOCK_CALENDAR_EVENTS;
+  }
+  
+  try {
+    const response = await api.get('/security/calendar-events');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching calendar events:', error);
+    throw error;
+  }
+};
+
+/**
+ * Obtiene estadísticas para un día específico
+ */
+export const fetchDailyStats = async (date: Date) => {
+  if (USE_MOCK) {
+    await delay(400);
+    const dateKey = formatDateKey(date);
+    
+    // Si existe el día específico, devuelve esos datos
+    if (MOCK_DAILY_STATS[dateKey]) {
+      return MOCK_DAILY_STATS[dateKey];
+    }
+    
+    // De lo contrario, generar datos aleatorios basados en la fecha
+    const day = date.getDate();
+    const randomFactor = (day % 5) + 1;
+    
+    return {
+      totalAttacks: 25 + randomFactor * 3,
+      blockedAttacks: 22 + randomFactor * 2,
+      criticalAlerts: randomFactor > 3 ? randomFactor - 3 : 0,
+      activeUsers: 12 + randomFactor
+    };
+  }
+  
+  try {
+    const dateFormatted = formatDateKey(date);
+    const response = await api.get(`/security/daily-stats/${dateFormatted}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching daily stats for ${date}:`, error);
     throw error;
   }
 };

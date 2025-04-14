@@ -8,13 +8,17 @@ import Dashboard from './pages/Dashboard'
 import Pipelines from './pages/Pipelines'
 import NotFound from './pages/NotFound'
 import ProtectedRoute from './components/shared/ProtectedRoute'
-import ChatbotProvider from './context/ChatbotContext'
+import { ChatbotProvider } from './context/ChatbotContext'
+
+// NO renderizar el Chatbot aquí, ya está en DashboardLayout
 
 const App = () => {
   const { isAuthenticated } = useAuth()
   
   return (
-    <ChatbotProvider>
+    <ChatbotProvider initialOpen={false}>
+      {/* NO renderizar ChatButton ni ChatWindow aquí, ya están en DashboardLayout */}
+      
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" />} />

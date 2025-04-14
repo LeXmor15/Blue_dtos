@@ -1,0 +1,490 @@
+/* src/styles/dashboard.css */
+
+/* Estilos generales del dashboard */
+.dashboard-container {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+  
+  /* Estilos del mapa */
+  .world-map-container {
+    position: relative;
+    overflow: hidden;
+    background-color: #1e293b;
+    border-radius: 0.5rem;
+  }
+  
+  .animated-line {
+    animation: dashoffset 3s linear;
+  }
+  
+  .origin-pulse {
+    animation: pulse 1.5s ease-out infinite;
+  }
+  
+  @keyframes dashoffset {
+    from {
+      stroke-dashoffset: 100;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(0.5);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+  
+  /* Estilos del calendario */
+  .calendar-container {
+    background-color: #ffffff;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .calendar-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  .custom-calendar {
+    border: none !important;
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    background-color: transparent;
+  }
+  
+  /* Quitar bordes y ajustar padding */
+  .react-calendar {
+    border: none;
+    line-height: 1.4;
+  }
+  
+  /* Navegación del calendario */
+  .react-calendar__navigation {
+    margin-bottom: 10px;
+  }
+  
+  /* Botones de navegación */
+  .react-calendar__navigation button {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 24px;
+    min-width: 36px;
+  }
+  
+  /* Título del mes en la navegación */
+  .react-calendar__navigation__label {
+    font-weight: normal;
+    font-size: 16px;
+    color: transparent !important;
+  }
+  
+  /* Cabecera días de la semana */
+  .react-calendar__month-view__weekdays {
+    font-size: 14px;
+    color: #888;
+    font-weight: normal;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  
+  .react-calendar__month-view__weekdays abbr {
+    text-decoration: none;
+    font-size: 12px;
+  }
+  
+  /* Celdas de días */
+  .react-calendar__tile {
+    padding: 10px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Quitar bordes de foco */
+  .react-calendar__tile:enabled:focus {
+    background-color: transparent;
+  }
+  
+  /* Días de otros meses */
+  .react-calendar__month-view__days__day--neighboringMonth {
+    color: #ccc;
+  }
+  
+  /* Día actual */
+  .react-calendar__tile--now {
+    background-color: transparent !important;
+    color: #fff !important;
+    position: relative;
+  }
+  
+  /* Día seleccionado - círculo azul */
+  .react-calendar__tile--active,
+  .react-calendar__tile--now {
+    background-color: #3b82f6 !important;
+    color: white !important;
+    border-radius: 50%;
+    font-weight: 500;
+  }
+  
+  /* Pequeño punto rojo en el día actual (5) */
+  .react-calendar__tile--now::after {
+    content: "";
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: #ff4d4d;
+    border-radius: 50%;
+  }
+  
+  /* Día con eventos */
+  .has-events::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 4px;
+    height: 4px;
+    background-color: #ff4d4d;
+    border-radius: 50%;
+  }
+  
+  /* Contenedor de servicios */
+  .services-boxes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 15px;
+  }
+  
+  /* Caja de servicio */
+  .service-box {
+    padding: 12px 16px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 46px;
+  }
+  
+  /* Icono de servicio */
+  .service-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+  }
+  
+  .service-icon.green {
+    background-color: #4ade80;
+    color: white;
+  }
+  
+  .service-icon.yellow {
+    background-color: #facc15;
+    color: white;
+  }
+  
+  .service-icon.red {
+    background-color: #ef4444;
+    color: white;
+  }
+  
+  /* Descripción del servicio */
+  .service-subtext {
+    color: #9ca3af;
+    font-size: 14px;
+    font-weight: 400;
+    flex: 1;
+    text-align: center;
+  }
+  
+  /* Nombre del servicio */
+  .service-text {
+    color: #000000;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: right;
+    min-width: 45px;
+  }
+  
+  /* Estilos para los paneles de estadísticas */
+  .stat-card {
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  .stat-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  /* Estilos para la tabla de eventos */
+  .events-table-container {
+    overflow-x: auto;
+  }
+  
+  .events-table {
+    min-width: 640px;
+    width: 100%;
+    color: white;
+  }
+  
+  .events-table-header {
+    font-weight: 500;
+    padding: 0.5rem;
+  }
+  
+  .events-table-cell {
+    padding: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Indicadores de severidad */
+  .severity-indicator {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    margin-right: 0.5rem;
+  }
+
+
+/* Estilos para el mapa oscuro - Puedes agregar esto a dashboard.css */
+
+/* Estilos generales del contenedor del mapa */
+.attack-map-container {
+  background-color: #0f172a;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Estilos para el fondo del mapa */
+.map-background {
+  fill: #0f172a;
+}
+
+/* Estilos para los países en el mapa */
+.country {
+  fill: #1e293b;
+  stroke: #334155;
+  stroke-width: 0.5;
+  transition: all 0.2s ease;
+}
+
+.country:hover {
+  fill: #334155;
+  filter: brightness(1.2);
+}
+
+.country.has-attacks {
+  stroke: #475569;
+}
+
+/* Diferentes niveles de intensidad para países con ataques */
+.country.attack-level-1 {
+  fill: #3b82f6;
+}
+
+.country.attack-level-2 {
+  fill: #2563eb;
+}
+
+.country.attack-level-3 {
+  fill: #1d4ed8;
+}
+
+.country.attack-level-4 {
+  fill: #1e40af;
+}
+
+.country.attack-level-5 {
+  fill: #1e3a8a;
+}
+
+/* Estilos para las líneas de ataque */
+.attack-line {
+  stroke-dasharray: 5,3;
+  stroke-width: 1.5;
+  fill: none;
+  opacity: 0.7;
+}
+
+/* Animaciones para las líneas de ataque */
+@keyframes dashOffset {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -16; }
+}
+
+.attack-line path {
+  animation: dashOffset 3s linear infinite;
+}
+
+/* Animación para los puntos de origen */
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  70% { opacity: 0.5; transform: scale(2); }
+  100% { opacity: 0; transform: scale(3); }
+}
+
+.origin-point {
+  animation: pulse 1.5s ease-out infinite;
+}
+
+/* Animación para los destinos */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.destination-ping {
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Estilos para el tooltip */
+.map-tooltip {
+  background-color: rgba(15, 23, 42, 0.9);
+  border: 1px solid #334155;
+  border-radius: 0.25rem;
+  color: white;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Estilos para los controles del mapa */
+.map-controls {
+  background-color: rgba(15, 23, 42, 0.7);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+.map-controls button {
+  background-color: #334155;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.map-controls button:hover {
+  background-color: #475569;
+}
+
+/* Estilos para la leyenda */
+.map-legend {
+  background-color: rgba(15, 23, 42, 0.8);
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  color: white;
+}
+
+.legend-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid #334155;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.legend-color {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 9999px;
+  margin-right: 0.5rem;
+}
+
+/* Estilos para el indicador de carga */
+.loading-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 20;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+  border-top: 2px solid white;
+  border-right: 2px solid transparent;
+  border-bottom: 2px solid white;
+  border-left: 2px solid transparent;
+  border-radius: 50%;
+  height: 2rem;
+  width: 2rem;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  color: white;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
