@@ -1,28 +1,32 @@
 @import "tailwindcss";
 
-/* Estilos básicos sin usar clases personalizadas */
+/* Base responsive styles */
+@layer base {
+  html {
+    @apply text-base;
+  }
+  
 body {
-  font-family: 'Inter', system-ui, sans-serif;
-  background-color: #f3f4f6; /* equivalente a bg-gray-100 */
-  color: #111827; /* equivalente a text-gray-900 */
+    @apply font-sans bg-gray-100 text-gray-900;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 500; /* equivalente a font-medium */
+  h1 {
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold;
 }
 
-/* Clases de componentes como valores CSS directos en lugar de clases personalizadas */
-.btn {
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  font-weight: 500;
-  transition-property: color, background-color, border-color;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  h2 {
+    @apply text-xl md:text-2xl lg:text-3xl font-semibold;
 }
 
-.btn-primary {
-  background-color: #3b82f6; /* equivalente a bg-blue-500 */
+  h3 {
+    @apply text-lg md:text-xl lg:text-2xl font-medium;
+  }
+}
+/* Responsive container */
+.container {
+  @apply mx-auto px-4 sm:px-6 lg:px-8;
+  max-width: 100%;
+
   color: white;
 }
 .btn-primary:hover {

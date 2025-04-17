@@ -6,12 +6,13 @@ export default {
   ],
   theme: {
     screens: {
-      'xs': '320px',     // Extra pequeño (teléfonos pequeños)
-      'sm': '640px',     // Pequeño (tablets verticales y teléfonos grandes)
-      'md': '768px',     // Medio (tablets)
-      'lg': '1024px',    // Grande (desktop)
-      'xl': '1280px',    // Extra grande
-      '2xl': '1536px',   // 2X Extra grande
+      'xs': '320px',     // Extra small devices
+      'sm': '640px',     // Small tablets and large phones
+      'md': '768px',     // Tablets
+      'lg': '1024px',    // Laptops/Desktops
+      'xl': '1280px',    // Large laptops and desktops
+      '2xl': '1536px',   // Extra large screens
+      '3xl': '1920px',   // 4K and ultra-wide screens
     },
     extend: {
       colors: {

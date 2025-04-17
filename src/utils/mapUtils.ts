@@ -1,92 +1,5 @@
-// src/utils/mapUtils.ts
-
-/**
- * Proyección de coordenadas geográficas a coordenadas SVG (Mercator)
- * @param lon Longitud en grados decimales
- * @param lat Latitud en grados decimales
- * @param width Ancho del SVG
- * @param height Alto del SVG
- * @returns Coordenadas [x, y] para el SVG
- */
-export const projectMercator = (
-  lon: number, 
-  lat: number, 
-  width: number = 960, 
-  height: number = 500
-): [number, number] => {
-  // Convertir a radianes
-  const lambda = (lon * Math.PI) / 180;
-  const phi = (lat * Math.PI) / 180;
-  
-  // Factor de escala
-  const scale = width / (2 * Math.PI);
-  
-  // Proyección Mercator
-  const x = scale * (lambda + Math.PI);
-  
-  // Ajuste para evitar valores infinitos cerca de los polos
-  let y;
-  if (Math.abs(lat) >= 85) {
-    // Limitar latitudes extremas
-    y = lat > 0 ? 0 : height;
-  } else {
-    y = scale * (Math.PI - Math.log(Math.tan(Math.PI / 4 + phi / 2)));
-  }
-  
-  return [x, y];
-};
-
-/**
- * Proyección equirectangular (más simple pero menos precisa que Mercator)
- * @param lon Longitud en grados decimales
- * @param lat Latitud en grados decimales
- * @param width Ancho del SVG
- * @param height Alto del SVG
- * @returns Coordenadas [x, y] para el SVG
- */
-export const projectEquirectangular = (
-  lon: number, 
-  lat: number, 
-  width: number = 960, 
-  height: number = 500
-): [number, number] => {
-  const x = (lon + 180) * (width / 360);
-  const y = (90 - lat) * (height / 180);
-  return [x, y];
-};
-
-/**
- * Crea un arco curvo entre dos puntos geográficos
- * @param source Coordenadas de origen [lon, lat]
- * @param destination Coordenadas de destino [lon, lat]
- * @param height Factor de curvatura (0-1)
- * @param width Ancho del SVG
- * @param height Alto del SVG
- * @returns String de path SVG para el arco
- */
-export const createArc = (
-  source: [number, number], 
-  destination: [number, number], 
-  curvature: number = 0.3,
-  width: number = 960, 
-  height: number = 500
-): string => {
-  // Proyectar coordenadas geográficas a SVG
-  const [sourceX, sourceY] = projectMercator(source[0], source[1], width, height);
-  const [destX, destY] = projectMercator(destination[0], destination[1], width, height);
-  
-  // Calcular la distancia entre puntos
-  const dx = destX - sourceX;
-  const dy = destY - sourceY;
-  const dist = Math.sqrt(dx * dx + dy * dy);
-  
-  // Punto de control para la curva (perpendicular a la línea que conecta los puntos)
-  const midX = (sourceX + destX) / 2;
-  const midY = (sourceY + destY) / 2 - dist * curvature; // Ajusta la curvatura
-  
-  // Devolver el path SVG
-  return `M${sourceX},${sourceY} Q${midX},${midY} ${destX},${destY}`;
-};
+// src/utils/mapUtils.ts (Actualizado para Leaflet)
+import L from 'leaflet';
 
 /**
  * Convierte códigos de país a nombre completo
@@ -218,7 +131,6 @@ export const getFlagEmoji = (countryCode: string): string => {
   return String.fromCodePoint(...codePoints);
 };
 
-
 /**
  * Devuelve la clase CSS para el indicador de severidad
  * @param severity Nivel de severidad ('critical', 'high', 'medium', 'low')
@@ -254,4 +166,94 @@ export const getAttacksByCountry = (attacks: any[]): Record<string, number> => {
   });
   
   return counts;
+};
+
+/**
+ * Crea un icono personalizado para Leaflet
+ * @param color Color del icono en formato hexadecimal
+ * @param size Tamaño del icono en píxeles
+ * @returns Objeto de icono de Leaflet
+ */
+export const createCustomIcon = (color: string, size: number = 10): L.DivIcon => {
+  return L.divIcon({
+    html: `<div style="
+      background-color: ${color};
+      width: ${size}px;
+      height: ${size}px;
+      border-radius: 50%;
+      border: 1px solid #fff;
+      opacity: 0.8;
+    "></div>`,
+    className: 'custom-div-icon',
+    iconSize: [size, size],
+    iconAnchor: [size/2, size/2]
+  });
+};
+
+/**
+ * Crea un icono de flecha para líneas de ataque
+ * @param color Color de la flecha
+ * @param direction Dirección de la flecha en grados (0-360)
+ * @returns Objeto de icono de Leaflet
+ */
+export const createArrowIcon = (color: string, direction: number = 0): L.DivIcon => {
+  return L.divIcon({
+    html: `<div style="
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 10px solid ${color};
+      transform: rotate(${direction}deg);
+    "></div>`,
+    className: 'arrow-icon',
+    iconSize: [10, 10],
+    iconAnchor: [5, 5]
+  });
+};
+
+/**
+ * Crea puntos para una línea curva entre dos puntos geográficos
+ * @param start Coordenadas de inicio [lat, lng]
+ * @param end Coordenadas de fin [lat, lng]
+ * @param intensity Factor de curvatura (0-1)
+ * @param numPoints Número de puntos para la curva
+ * @returns Array de coordenadas para crear la línea curva
+ */
+export const createCurvedLine = (
+  start: [number, number],
+  end: [number, number],
+  intensity: number = 0.3,
+  numPoints: number = 10
+): L.LatLngExpression[] => {
+  const points: L.LatLngExpression[] = [];
+  
+  // Calcular punto de control para la curva
+  const controlPoint = [
+    (start[0] + end[0]) / 2,
+    (start[1] + end[1]) / 2 + 
+    // Ajustar la dirección de la curva basándose en la longitud
+    ((end[1] > start[1] ? -1 : 1) * 
+    // Calcular la distancia aproximada
+    Math.sqrt(Math.pow(end[0] - start[0], 2) + Math.pow(end[1] - start[1], 2)) * 
+    intensity)
+  ];
+  
+  // Crear puntos a lo largo de la curva cuadrática
+  for (let i = 0; i <= numPoints; i++) {
+    const t = i / numPoints;
+    
+    // Interpolación cuadrática de Bezier
+    const lat = Math.pow(1 - t, 2) * start[0] + 
+                2 * (1 - t) * t * controlPoint[0] + 
+                Math.pow(t, 2) * end[0];
+                
+    const lng = Math.pow(1 - t, 2) * start[1] + 
+               2 * (1 - t) * t * controlPoint[1] + 
+               Math.pow(t, 2) * end[1];
+               
+    points.push([lat, lng]);
+  }
+  
+  return points;
 };

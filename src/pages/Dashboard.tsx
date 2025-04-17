@@ -208,7 +208,10 @@ const Dashboard = () => {
         source: { lat: attack.sourceLat, lng: attack.sourceLong },
         destination: { lat: attack.destLat, lng: attack.destLong },
         timestamp: Date.now(),
-        attackType: attack.attackType
+        attackType: attack.attackType,
+        severity: attack.severity,
+        countryCode: attack.countryCode,
+        ipAddress: attack.sourceIp
       }
     ]);
 
@@ -505,12 +508,18 @@ const Dashboard = () => {
           min-width: 45px;
         }
 
+        /* Estilos para el mapa Leaflet */
+        .leaflet-container {
+          height: 100%;
+          width: 100%;
+        }
+
         /* Animaciones para el mapa */
-        .animated-line {
+        .attack-line {
           animation: dashoffset 3s linear;
         }
         
-        .origin-pulse {
+        .pulse-marker {
           animation: pulse 1.5s ease-out infinite;
         }
         

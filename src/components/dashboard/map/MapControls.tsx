@@ -1,39 +1,71 @@
 // src/components/dashboard/map/MapControls.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AttackLine } from '../../../types/dashboard';
+import { getAttackTypeColor } from '../../../utils/mapUtils';
 
 interface MapControlsProps {
   attackLines: AttackLine[];
-  onFilterChange: (filteredLines: AttackLine[]) => void;
+  onFilterChange: (filtered: AttackLine[]) => void;
 }
 
 const MapControls: React.FC<MapControlsProps> = ({ attackLines, onFilterChange }) => {
-  const [selectedAttackTypes, setSelectedAttackTypes] = useState<string[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedSeverities, setSelectedSeverities] = useState<string[]>([]);
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
-  const [timeRange, setTimeRange] = useState<string>('all'); // 'all', 'day', 'week', 'month'
-  const [severityLevels, setSeverityLevels] = useState<string[]>([]);
-  const [showOnlyBlocked, setShowOnlyBlocked] = useState<boolean>(false);
+  const [showBlocked, setShowBlocked] = useState<boolean | null>(null);
   
-  // Extraer todos los tipos de ataque únicos
-  const attackTypes = Array.from(new Set(attackLines.map(line => line.attackType.toLowerCase())));
+  // Obtener tipos de ataque únicos
+  const getUniqueAttackTypes = (): string[] => {
+    const types = new Set<string>();
+    attackLines.forEach(line => {
+      if (line.attackType) {
+        types.add(line.attackType.toLowerCase());
+      }
+    });
+    return Array.from(types).sort();
+  };
   
-  // Extraer todos los países únicos (asumiendo que existe countryCode)
-  const countries = Array.from(
-    new Set(
-      attackLines
-        .filter(line => line.countryCode)
-        .map(line => line.countryCode as string)
-    )
-  );
+  // Obtener severidades únicas
+  const getUniqueSeverities = (): string[] => {
+    const severities = new Set<string>();
+    attackLines.forEach(line => {
+      if (line.severity) {
+        severities.add(line.severity.toLowerCase());
+      }
+    });
+    return Array.from(severities).sort();
+  };
   
-  // Función para aplicar filtros
-  const applyFilters = () => {
+  // Obtener países únicos
+  const getUniqueCountries = (): Array<{ code: string, count: number }> => {
+    const countries = new Map<string, number>();
+    attackLines.forEach(line => {
+      if (line.countryCode) {
+        const code = line.countryCode;
+        countries.set(code, (countries.get(code) || 0) + 1);
+      }
+    });
+    
+    return Array.from(countries.entries())
+      .map(([code, count]) => ({ code, count }))
+      .sort((a, b) => b.count - a.count);
+  };
+  
+  // Aplicar los filtros cuando cambian las selecciones
+  useEffect(() => {
     let filtered = [...attackLines];
     
     // Filtrar por tipo de ataque
-    if (selectedAttackTypes.length > 0) {
+    if (selectedTypes.length > 0) {
       filtered = filtered.filter(line => 
-        selectedAttackTypes.includes(line.attackType.toLowerCase())
+        line.attackType && selectedTypes.includes(line.attackType.toLowerCase())
+      );
+    }
+    
+    // Filtrar por severidad
+    if (selectedSeverities.length > 0) {
+      filtered = filtered.filter(line => 
+        line.severity && selectedSeverities.includes(line.severity.toLowerCase())
       );
     }
     
@@ -44,251 +76,185 @@ const MapControls: React.FC<MapControlsProps> = ({ attackLines, onFilterChange }
       );
     }
     
-    // Filtrar por rango de tiempo
-    if (timeRange !== 'all') {
-      const now = new Date();
-      let cutoffDate = new Date();
-      
-      switch (timeRange) {
-        case 'day':
-          cutoffDate.setDate(now.getDate() - 1);
-          break;
-        case 'week':
-          cutoffDate.setDate(now.getDate() - 7);
-          break;
-        case 'month':
-          cutoffDate.setMonth(now.getMonth() - 1);
-          break;
-      }
-      
-      filtered = filtered.filter(line => {
-        const attackDate = new Date(line.timestamp);
-        return attackDate >= cutoffDate;
-      });
-    }
-    
-    // Filtrar por nivel de severidad
-    if (severityLevels.length > 0) {
-      filtered = filtered.filter(line => 
-        severityLevels.includes(line.severity
-          ? line.severity.toLowerCase() : 'unknown'
-        )
-      );
-    }
-    
     // Filtrar por estado de bloqueo
-    if (showOnlyBlocked) {
-      filtered = filtered.filter(line => line.blocked);
+    if (showBlocked !== null) {
+      filtered = filtered.filter(line => line.blocked === showBlocked);
     }
     
-    // Enviar los resultados filtrados
     onFilterChange(filtered);
+  }, [attackLines, selectedTypes, selectedSeverities, selectedCountries, showBlocked, onFilterChange]);
+  
+  // Alternar la selección de un tipo de ataque
+  const toggleAttackType = (type: string) => {
+    setSelectedTypes(prev => 
+      prev.includes(type) ? 
+        prev.filter(t => t !== type) : 
+        [...prev, type]
+    );
   };
   
-  // Manejadores de eventos para los filtros
-  const handleAttackTypeChange = (type: string) => {
-    setSelectedAttackTypes(prev => {
-      if (prev.includes(type)) {
-        return prev.filter(t => t !== type);
-      } else {
-        return [...prev, type];
-      }
-    });
+  // Alternar la selección de una severidad
+  const toggleSeverity = (severity: string) => {
+    setSelectedSeverities(prev => 
+      prev.includes(severity) ? 
+        prev.filter(s => s !== severity) : 
+        [...prev, severity]
+    );
   };
   
-  const handleCountryChange = (country: string) => {
-    setSelectedCountries(prev => {
-      if (prev.includes(country)) {
-        return prev.filter(c => c !== country);
-      } else {
-        return [...prev, country];
-      }
-    });
-  };
-  
-  const handleSeverityChange = (severity: string) => {
-    setSeverityLevels(prev => {
-      if (prev.includes(severity)) {
-        return prev.filter(s => s !== severity);
-      } else {
-        return [...prev, severity];
-      }
-    });
+  // Alternar la selección de un país
+  const toggleCountry = (countryCode: string) => {
+    setSelectedCountries(prev => 
+      prev.includes(countryCode) ? 
+        prev.filter(c => c !== countryCode) : 
+        [...prev, countryCode]
+    );
   };
   
   // Limpiar todos los filtros
-  const clearFilters = () => {
-    setSelectedAttackTypes([]);
+  const clearAllFilters = () => {
+    setSelectedTypes([]);
+    setSelectedSeverities([]);
     setSelectedCountries([]);
-    setTimeRange('all');
-    setSeverityLevels([]);
-    setShowOnlyBlocked(false);
-    onFilterChange(attackLines);
+    setShowBlocked(null);
   };
   
+  // Clase CSS para etiquetas de filtro
+  const getFilterTagClass = (selected: boolean) => {
+    return `px-2 py-1 rounded text-xs font-medium cursor-pointer transition-colors duration-200 ${
+      selected ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+    }`;
+  };
+  
+  // Obtener color para el tipo de ataque
+  const getTypeColor = (type: string) => {
+    return getAttackTypeColor(type);
+  };
+  
+  // Obtener color para la severidad
+  const getSeverityColor = (severity: string) => {
+    switch (severity.toLowerCase()) {
+      case 'critical': return '#ef4444'; // Rojo
+      case 'high': return '#f97316'; // Naranja
+      case 'medium': return '#eab308'; // Amarillo
+      case 'low': return '#3b82f6'; // Azul
+      default: return '#9ca3af'; // Gris
+    }
+  };
+
   return (
-    <div className="bg-gray-800 rounded-lg p-3 text-white text-sm">
-      <h3 className="font-bold mb-2 text-base">Filtros del mapa</h3>
-      
-      {/* Filtro de tipo de ataque */}
-      <div className="mb-3">
-        <h4 className="font-semibold mb-1">Tipo de ataque</h4>
-        <div className="space-y-1 max-h-28 overflow-y-auto">
-          {attackTypes.map(type => (
-            <label key={type} className="flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={selectedAttackTypes.includes(type)}
-                onChange={() => handleAttackTypeChange(type)}
-                className="mr-2"
-              />
-              <span className="capitalize">{type}</span>
-            </label>
-          ))}
-          {attackTypes.length === 0 && (
-            <p className="text-gray-400 text-xs">No hay datos disponibles</p>
-          )}
-        </div>
+    <div className="p-3 bg-gray-800 rounded-lg text-white">
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-sm font-bold">Filtros del mapa</h3>
+        <button 
+          onClick={clearAllFilters}
+          className="text-xs text-blue-400 hover:text-blue-300"
+        >
+          Limpiar filtros
+        </button>
       </div>
       
-      {/* Filtro de país */}
-      <div className="mb-3">
-        <h4 className="font-semibold mb-1">País de origen</h4>
-        <div className="space-y-1 max-h-28 overflow-y-auto">
-          {countries.map(country => (
-            <label key={country} className="flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={selectedCountries.includes(country)}
-                onChange={() => handleCountryChange(country)}
-                className="mr-2"
-              />
-              <span>{country}</span>
-            </label>
-          ))}
-          {countries.length === 0 && (
-            <p className="text-gray-400 text-xs">No hay datos disponibles</p>
-          )}
-        </div>
-      </div>
-      
-      {/* Filtro de tiempo */}
-      <div className="mb-3">
-        <h4 className="font-semibold mb-1">Período de tiempo</h4>
-        <div className="space-y-1">
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="radio"
-              name="timeRange"
-              checked={timeRange === 'all'}
-              onChange={() => setTimeRange('all')}
-              className="mr-2"
-            />
-            <span>Todo</span>
-          </label>
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="radio"
-              name="timeRange"
-              checked={timeRange === 'day'}
-              onChange={() => setTimeRange('day')}
-              className="mr-2"
-            />
-            <span>Último día</span>
-          </label>
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="radio"
-              name="timeRange"
-              checked={timeRange === 'week'}
-              onChange={() => setTimeRange('week')}
-              className="mr-2"
-            />
-            <span>Última semana</span>
-          </label>
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="radio"
-              name="timeRange"
-              checked={timeRange === 'month'}
-              onChange={() => setTimeRange('month')}
-              className="mr-2"
-            />
-            <span>Último mes</span>
-          </label>
-        </div>
-      </div>
-      
-      {/* Filtro de severidad */}
-      <div className="mb-3">
-        <h4 className="font-semibold mb-1">Severidad</h4>
-        <div className="space-y-1">
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={severityLevels.includes('low')}
-              onChange={() => handleSeverityChange('low')}
-              className="mr-2"
-            />
-            <span>Baja</span>
-          </label>
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={severityLevels.includes('medium')}
-              onChange={() => handleSeverityChange('medium')}
-              className="mr-2"
-            />
-            <span>Media</span>
-          </label>
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={severityLevels.includes('high')}
-              onChange={() => handleSeverityChange('high')}
-              className="mr-2"
-            />
-            <span>Alta</span>
-          </label>
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={severityLevels.includes('critical')}
-              onChange={() => handleSeverityChange('critical')}
-              className="mr-2"
-            />
-            <span>Crítica</span>
-          </label>
-        </div>
-      </div>
-      
-      {/* Filtro de bloqueo */}
+      {/* Filtro por tipo de ataque */}
       <div className="mb-4">
-        <label className="flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            checked={showOnlyBlocked}
-            onChange={() => setShowOnlyBlocked(!showOnlyBlocked)}
-            className="mr-2"
-          />
-          <span>Solo mostrar ataques bloqueados</span>
-        </label>
+        <h4 className="text-xs font-semibold mb-2">Tipo de ataque</h4>
+        <div className="flex flex-wrap gap-1">
+          {getUniqueAttackTypes().map(type => (
+            <div
+              key={`type-${type}`}
+              className={getFilterTagClass(selectedTypes.includes(type))}
+              onClick={() => toggleAttackType(type)}
+              style={{
+                borderLeft: `3px solid ${getTypeColor(type)}`
+              }}
+            >
+              {type.toUpperCase()}
+            </div>
+          ))}
+        </div>
       </div>
       
-      {/* Botones de acción */}
-      <div className="flex space-x-2">
-        <button
-          onClick={applyFilters}
-          className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded-md flex-1"
-        >
-          Aplicar filtros
-        </button>
-        <button
-          onClick={clearFilters}
-          className="px-3 py-1 bg-gray-600 hover:bg-gray-700 rounded-md"
-        >
-          Limpiar
-        </button>
+      {/* Filtro por severidad */}
+      <div className="mb-4">
+        <h4 className="text-xs font-semibold mb-2">Severidad</h4>
+        <div className="flex flex-wrap gap-1">
+          {getUniqueSeverities().map(severity => (
+            <div
+              key={`severity-${severity}`}
+              className={getFilterTagClass(selectedSeverities.includes(severity))}
+              onClick={() => toggleSeverity(severity)}
+              style={{
+                borderLeft: `3px solid ${getSeverityColor(severity)}`
+              }}
+            >
+              {severity.toUpperCase()}
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Filtro por país (mostrar solo los top 10 por frecuencia) */}
+      <div className="mb-4">
+        <h4 className="text-xs font-semibold mb-2">País de origen (Top 10)</h4>
+        <div className="flex flex-wrap gap-1">
+          {getUniqueCountries().slice(0, 10).map(country => (
+            <div
+              key={`country-${country.code}`}
+              className={getFilterTagClass(selectedCountries.includes(country.code))}
+              onClick={() => toggleCountry(country.code)}
+            >
+              {country.code.toUpperCase()} ({country.count})
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Filtro por estado de bloqueo */}
+      <div className="mb-4">
+        <h4 className="text-xs font-semibold mb-2">Estado</h4>
+        <div className="flex gap-2">
+          <div
+            className={getFilterTagClass(showBlocked === true)}
+            onClick={() => setShowBlocked(prev => prev === true ? null : true)}
+          >
+            Bloqueados
+          </div>
+          <div
+            className={getFilterTagClass(showBlocked === false)}
+            onClick={() => setShowBlocked(prev => prev === false ? null : false)}
+          >
+            No bloqueados
+          </div>
+        </div>
+      </div>
+      
+      {/* Estadísticas de filtro */}
+      <div className="mt-4 pt-3 border-t border-gray-700 text-xs">
+        <div>
+          Mostrando: <span className="font-semibold">
+            {attackLines.filter(line => {
+              // Aplicar los mismos filtros para mostrar el conteo correcto
+              let match = true;
+              
+              if (selectedTypes.length > 0) {
+                match = match && Boolean(line.attackType) && selectedTypes.includes(line.attackType.toLowerCase());
+              }
+              
+              if (selectedSeverities.length > 0) {
+                match = match && typeof line.severity === 'string' && selectedSeverities.includes(line.severity.toLowerCase());
+              }
+              
+              if (selectedCountries.length > 0) {
+                match = match && Boolean(line.countryCode) && selectedCountries.includes(line.countryCode ?? '');
+              }
+              
+              if (showBlocked !== null) {
+                match = match && line.blocked === showBlocked;
+              }
+              
+              return match;
+            }).length
+          } de {attackLines.length}</span> ataques
+        </div>
       </div>
     </div>
   );
