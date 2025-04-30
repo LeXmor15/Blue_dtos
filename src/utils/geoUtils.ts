@@ -91,7 +91,7 @@ export const isValidGeoJSON = (data: any): boolean => {
  * @param tolerance Tolerancia de simplificación (mayor valor = más simplificación)
  * @returns GeoJSON simplificado
  */
-export const simplifyGeoJson = (geoJson: any, tolerance: number = 0.01): any => {
+export const simplifyGeoJson = (geoJson: any): any => {
   // Esta es una implementación básica. Para una simplificación real,
   // se recomienda usar una biblioteca como Turf.js
   

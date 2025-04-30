@@ -26,57 +26,57 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
   
   return (
-<div className="flex h-screen bg-[#f5f7fa]">
+<div className="flex h-screen bg-[#f5f7fa] overflow-x-hidden">
       {/* Sidebar - Responsive */}
-      <div className="fixed md:relative w-[70px] md:w-[10%] h-full bg-white flex flex-col items-center justify-between p-2 md:p-4 shadow-md z-10">
+      <div className="fixed md:relative w-[70px] md:w-[200px] lg:w-[240px] h-full bg-white flex flex-col items-center justify-between p-1 md:p-4 shadow-md z-10">
         {/* Logo section */}
         <div className="text-center mb-3 w-full">
-          <img src={logo} alt="Logo" className="w-[88%] mx-auto hidden md:block" />
+          <img src={logo} alt="Logo" className="w-[58%] mx-auto hidden md:block" />
           <img src={logo} alt="Logo" className="w-[40px] mx-auto md:hidden" />
         </div>
         
         {/* Navigation links */}
-        <ul className="nav flex flex-col mb-auto w-full space-y-2">
-          <li className="w-full">
+        <ul className="nav flex flex-col items-center justify-center mb-auto w-full space-y-1">
+          <li className="w-full flex justify-center">
             <Link 
               to="/dashboard" 
-              className={`flex items-center px-2 md:px-4 py-2 rounded-md ${
+              className={`flex items-center px-2 md:px-4 py-2 rounded-md transition-all duration-200 hover:bg-gray-100 ${
                 isActive('/dashboard') ? 'text-[#425ebb] font-medium' : 'text-black'
               }`}
             >
-              <img src={homeIcon} alt="Home" className="w-[15px] h-[15px] md:mr-2" />
-              <span className="hidden md:inline">Home</span>
+              <img src={homeIcon} alt="Home" className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] md:mr-3 flex-shrink-0" />
+              <span className="hidden md:inline text-sm lg:text-base whitespace-nowrap">Home</span>
             </Link>
           </li>
-          <li className="w-full">
+          <li className="w-full flex justify-center">
             <Link 
               to="/pipelines" 
-              className={`flex items-center px-2 md:px-4 py-2 rounded-md ${
+              className={`flex items-center px-2 md:px-4 py-2 rounded-md transition-all duration-200 hover:bg-gray-100 ${
                 isActive('/pipelines') ? 'text-[#425ebb] font-medium' : 'text-black'
               }`}
             >
-              <img src={pipelinesIcon} alt="Pipelines" className="w-[15px] h-[15px] md:mr-2" />
-              <span className="hidden md:inline">Pipelines</span>
+              <img src={pipelinesIcon} alt="Pipelines" className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] md:mr-3 flex-shrink-0" />
+              <span className="hidden md:inline text-sm lg:text-base whitespace-nowrap">Pipelines</span>
             </Link>
           </li>
-          <li className="w-full">
+          <li className="w-full flex justify-center">
             <Link 
               to="/services" 
-              className={`flex items-center px-2 md:px-4 py-2 rounded-md ${
+              className={`flex items-center px-2 md:px-4 py-2 rounded-md transition-all duration-200 hover:bg-gray-100 ${
                 isActive('/services') ? 'text-[#425ebb] font-medium' : 'text-black'
               }`}
             >
-              <img src={servicesIcon} alt="Services" className="w-[15px] h-[15px] md:mr-2" />
-              <span className="hidden md:inline">Services</span>
+              <img src={servicesIcon} alt="Services" className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] md:mr-3 flex-shrink-0" />
+              <span className="hidden md:inline text-sm lg:text-base whitespace-nowrap">Services</span>
             </Link>
           </li>
-          <li className="w-full mt-auto">
+          <li className="w-full">
             <button 
               onClick={logout}
-              className="flex items-center w-full px-2 md:px-4 py-2 rounded-md text-black hover:text-[#425ebb]"
+              className="flex items-center justify-center w-full px-2 md:px-4 py-2 rounded-md text-black hover:bg-gray-100 transition-all duration-200"
             >
-              <img src={logoutIcon} alt="Logout" className="w-[15px] h-[15px] md:mr-2" />
-              <span className="hidden md:inline">Log out</span>
+              <img src={logoutIcon} alt="Logout" className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] md:mr-3 flex-shrink-0" />
+              <span className="hidden md:inline text-sm lg:text-base whitespace-nowrap">Log out</span>
             </button>
           </li>
         </ul>
@@ -94,8 +94,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         
         {/* Mobile contact button */}
         <div className="md:hidden">
-          <button className="p-2 rounded-full bg-[#3498db] text-white">
-            <img src={inboxIcon} alt="Contact" className="w-5 h-5" />
+          <button className="p-1.5 rounded-full bg-[#3498db] text-white">
+            <img src={inboxIcon} alt="Contact" className="w-4 h-4" />
           </button>
         </div>
         
@@ -109,7 +109,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </div>
       
       {/* Main content */}
-      <div className="flex-grow ml-[70px] md:ml-[5px] w-full">
+      <div className="flex-1 w-[calc(100%-60px)] md:w-[calc(100%-200px)] lg:w-[calc(100%-240px)] ml-[60px] md:ml-0">
         {/* Header */}
         <header className="bg-white flex justify-between items-center py-2 md:py-3 px-2 md:px-4 shadow-sm">
           <h1 className="font-bold text-base md:text-lg">BLUE AGENT PANEL</h1>
