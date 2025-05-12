@@ -243,9 +243,9 @@ const Dashboard = () => {
             />
             
             {/* Mapa y Calendario lado a lado */}
-            <div className="flex flex-col lg:flex-row gap-4 mb-4">
+            <div className="flex flex-col lg:flex-row gap-4 mb-4" style={{ zIndex: 1 }}>
               {/* Mapa reducido en tamaño (2/3 del ancho) */}
-              <div className="bg-gray-800 rounded-lg overflow-hidden w-full lg:w-2/3">
+              <div className="bg-gray-800 rounded-lg overflow-hidden w-full lg:w-2/3" style={{ zIndex: 1 }}>
                 {/* World map */}
                 <WorldMap attackLines={attackLines} />
                 
