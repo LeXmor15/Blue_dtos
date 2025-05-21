@@ -1,10 +1,24 @@
 // src/types/auth.ts
 export interface User {
-    id: string;
-    email: string;
-    name: string;
-    role: string;
-  }
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  phone?: string;
+  jobTitle?: string;
+  preferences?: {
+    language: string;
+    timezone: string;
+    dateFormat: string;
+  };
+  notifications?: {
+    email: boolean;
+    push: boolean;
+    alerts: boolean;
+    weeklyReports: boolean;
+    systemUpdates: boolean;
+  };
+}
   
   export interface AuthState {
     user: User | null;

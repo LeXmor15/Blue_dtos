@@ -12,7 +12,8 @@ type AuthAction =
   | { type: 'REGISTER_FAILURE'; payload: string }
   | { type: 'LOGOUT' }
   | { type: 'CLEAR_ERROR' }
-  | { type: 'AUTH_CHECK_COMPLETE'; payload: User | null };
+  | { type: 'AUTH_CHECK_COMPLETE'; payload: User | null }
+  | { type: 'UPDATE_USER'; payload: User };
 
 interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
@@ -20,6 +21,10 @@ interface AuthContextType extends AuthState {
   forgotPassword: (data: ForgotPasswordData) => Promise<void>;
   logout: () => void;
   clearError: () => void;
+  updateProfile: (data: Partial<User>) => Promise<void>;
+  updatePassword: (data: { currentPassword: string, newPassword: string }) => Promise<void>;
+  updatePreferences: (preferences: any) => Promise<void>;
+  updateNotifications: (notifications: any) => Promise<void>;
 }
 
 const initialState: AuthState = {
@@ -36,6 +41,10 @@ export const AuthContext = createContext<AuthContextType>({
   forgotPassword: async () => {},
   logout: () => {},
   clearError: () => {},
+  updateProfile: async () => {},
+  updatePassword: async () => {},
+  updatePreferences: async () => {},
+  updateNotifications: async () => {}
 });
 
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
@@ -80,6 +89,11 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         ...state,
         isLoading: false,
         isAuthenticated: !!action.payload,
+        user: action.payload,
+      };
+    case 'UPDATE_USER':
+      return {
+        ...state,
         user: action.payload,
       };
     default:
@@ -143,6 +157,46 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
+  const updateProfile = async (data: Partial<User>) => {
+    try {
+      const updatedUser = await authService.updateProfile(data);
+      dispatch({ type: 'UPDATE_USER', payload: updatedUser });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      throw error;
+    }
+  };
+
+  const updatePassword = async (data: { currentPassword: string, newPassword: string }) => {
+    try {
+      await authService.updatePassword(data);
+    } catch (error) {
+      console.error('Error updating password:', error);
+      throw error;
+    }
+  };
+
+  const updatePreferences = async (preferences: any) => {
+    try {
+      const updatedUser = await authService.updatePreferences(preferences);
+      dispatch({ type: 'UPDATE_USER', payload: updatedUser });
+    } catch (error) {
+      console.error('Error updating preferences:', error);
+      throw error;
+    }
+  };
+
+  const updateNotifications = async (notifications: any) => {
+    try {
+      const updatedUser = await authService.updateNotifications(notifications);
+      dispatch({ type: 'UPDATE_USER', payload: updatedUser });
+    } catch (error) {
+      console.error('Error updating notifications:', error);
+      throw error;
+    }
+  };
+
+
   const logout = () => {
     authService.logout();
     dispatch({ type: 'LOGOUT' });
@@ -161,6 +215,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         forgotPassword,
         logout,
         clearError,
+        updateProfile,
+        updatePassword,
+        updatePreferences,
+        updateNotifications,
       }}
     >
       {children}

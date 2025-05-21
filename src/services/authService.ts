@@ -41,7 +41,7 @@ const authService = {
       await delay(800);
       
       // Simulación simple de verificación de credenciales
-      if (credentials.email === 'user@example.com' && credentials.password === 'password') {
+      if (credentials.email === 'admin@admin.com' && credentials.password === 'admin123') {
         localStorage.setItem('token', 'mock-jwt-token');
         localStorage.setItem('user', JSON.stringify(MOCK_USER));
         return MOCK_USER;
@@ -89,6 +89,99 @@ const authService = {
     localStorage.setItem('user', JSON.stringify(user));
     
     return user;
+  },
+
+  // Actualizar perfil de usuario
+  async updateProfile(profileData: Partial<User>): Promise<User> {
+    if (USE_MOCK) {
+      await delay(800);
+
+      // Actualizar el usuario en localStorage
+      const userJSON = localStorage.getItem('user');
+      if (userJSON) {
+        const currentUser = JSON.parse(userJSON);
+        const updatedUser = { ...currentUser, ...profileData };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        return updatedUser;
+      }
+      throw new Error('User not found');
+    }
+
+    const response = await api.put('/auth/profile', profileData);
+    const updatedUser = response.data.user;
+
+    // Actualizar en localStorage
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+
+    return updatedUser;
+  },
+
+  // Actualizar contraseña
+  async updatePassword(data: { currentPassword: string, newPassword: string }): Promise<void> {
+    if (USE_MOCK) {
+      await delay(800);
+      // Simulación de verificación de contraseña actual
+      if (data.currentPassword !== 'password') {
+        throw new Error('Current password is incorrect');
+      }
+      return;
+    }
+
+    await api.put('/auth/password', data);
+  },
+
+  // Actualizar preferencias
+  async updatePreferences(preferences: any): Promise<User> {
+    if (USE_MOCK) {
+      await delay(600);
+
+      const userJSON = localStorage.getItem('user');
+      if (userJSON) {
+        const currentUser = JSON.parse(userJSON);
+        const updatedUser = {
+          ...currentUser,
+          preferences: {
+            ...currentUser.preferences,
+            ...preferences
+          }
+        };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        return updatedUser;
+      }
+      throw new Error('User not found');
+    }
+
+    const response = await api.put('/auth/preferences', { preferences });
+    const updatedUser = response.data.user;
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    return updatedUser;
+  },
+
+  // Actualizar configuración de notificaciones
+  async updateNotifications(notifications: any): Promise<User> {
+    if (USE_MOCK) {
+      await delay(600);
+
+      const userJSON = localStorage.getItem('user');
+      if (userJSON) {
+        const currentUser = JSON.parse(userJSON);
+        const updatedUser = {
+          ...currentUser,
+          notifications: {
+            ...currentUser.notifications,
+            ...notifications
+          }
+        };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        return updatedUser;
+      }
+      throw new Error('User not found');
+    }
+
+    const response = await api.put('/auth/notifications', { notifications });
+    const updatedUser = response.data.user;
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    return updatedUser;
   },
 
   // Solicitar restablecimiento de contraseña

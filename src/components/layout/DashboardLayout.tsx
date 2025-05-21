@@ -26,63 +26,60 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
   
   return (
-<div className="flex h-screen bg-[#f5f7fa] overflow-x-hidden">
-      {/* Sidebar - Responsive */}
-      <div className="fixed md:relative w-[70px] md:w-[200px] lg:w-[240px] h-full bg-white flex flex-col items-center justify-between p-1 md:p-4 shadow-md z-10">
+    <div className="flex flex-col md:flex-row h-screen bg-[#f5f7fa] overflow-hidden">
+      {/* Sidebar - Desktop: Vertical en lado izquierdo */}
+      <div className="hidden md:flex md:w-[200px] lg:w-[240px] h-full bg-white flex-col items-center justify-between p-4 shadow-md z-10">
         {/* Logo section */}
         <div className="text-center mb-3 w-full">
-          <img src={logo} alt="Logo" className="w-[58%] mx-auto hidden md:block" />
-          <img src={logo} alt="Logo" className="w-[40px] mx-auto md:hidden" />
+          <img src={logo} alt="Logo" className="w-[88%] mx-auto" />
         </div>
         
         {/* Navigation links */}
-        <ul className="nav flex flex-col items-center justify-center mb-auto w-full space-y-1">
-          <li className="w-full flex justify-center">
+        <ul className="nav flex flex-col mb-auto w-full space-y-4">
+          <li className="w-full">
             <Link 
               to="/dashboard" 
-              className={`flex items-center px-2 md:px-4 py-2 rounded-md transition-all duration-200 hover:bg-gray-100 ${
+              className={`flex items-center px-4 py-2 rounded-md ${
                 isActive('/dashboard') ? 'text-[#425ebb] font-medium' : 'text-black'
               }`}
             >
-              <img src={homeIcon} alt="Home" className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] md:mr-3 flex-shrink-0" />
-              <span className="hidden md:inline text-sm lg:text-base whitespace-nowrap">Home</span>
-            </Link>
-          </li>
-          <li className="w-full flex justify-center">
-            <Link 
-              to="/pipelines" 
-              className={`flex items-center px-2 md:px-4 py-2 rounded-md transition-all duration-200 hover:bg-gray-100 ${
-                isActive('/pipelines') ? 'text-[#425ebb] font-medium' : 'text-black'
-              }`}
-            >
-              <img src={pipelinesIcon} alt="Pipelines" className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] md:mr-3 flex-shrink-0" />
-              <span className="hidden md:inline text-sm lg:text-base whitespace-nowrap">Pipelines</span>
-            </Link>
-          </li>
-          <li className="w-full flex justify-center">
-            <Link 
-              to="/services" 
-              className={`flex items-center px-2 md:px-4 py-2 rounded-md transition-all duration-200 hover:bg-gray-100 ${
-                isActive('/services') ? 'text-[#425ebb] font-medium' : 'text-black'
-              }`}
-            >
-              <img src={servicesIcon} alt="Services" className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] md:mr-3 flex-shrink-0" />
-              <span className="hidden md:inline text-sm lg:text-base whitespace-nowrap">Services</span>
+              <img src={homeIcon} alt="Home" className="w-[15px] h-[15px] mr-2" />
+              <span>Home</span>
             </Link>
           </li>
           <li className="w-full">
-            <button 
-              onClick={logout}
-              className="flex items-center justify-center w-full px-2 md:px-4 py-2 rounded-md text-black hover:bg-gray-100 transition-all duration-200"
+            <Link 
+              to="/pipelines" 
+              className={`flex items-center px-4 py-2 rounded-md ${
+                isActive('/pipelines') ? 'text-[#425ebb] font-medium' : 'text-black'
+              }`}
             >
-              <img src={logoutIcon} alt="Logout" className="w-[18px] h-[18px] md:w-[20px] md:h-[20px] md:mr-3 flex-shrink-0" />
-              <span className="hidden md:inline text-sm lg:text-base whitespace-nowrap">Log out</span>
+              <img src={pipelinesIcon} alt="Pipelines" className="w-[15px] h-[15px] mr-2" />
+              <span>Pipelines</span>
+            </Link>
+          </li>
+          <li className="w-full">
+            <Link 
+              to="/services" 
+              className="flex items-center px-4 py-2 rounded-md text-black"
+            >
+              <img src={servicesIcon} alt="Services" className="w-[15px] h-[15px] mr-2" />
+              <span>Services</span>
+            </Link>
+          </li>
+          <li className="w-full">
+            <button
+              onClick={logout}
+              className="flex items-center px-4 py-2 rounded-md text-black w-full text-left"
+            >
+              <img src={logoutIcon} alt="Logout" className="w-[15px] h-[15px] mr-2" />
+              <span>Log out</span>
             </button>
           </li>
         </ul>
         
-        {/* Contact box - Responsive */}
-        <div className="hidden md:block bg-[#3498db] w-[124px] h-[144px] rounded-lg p-4 text-white mt-auto mb-4 shadow-md">
+        {/* Contact box - Emulando la caja azul del CSS */}
+        <div className="bg-[#3498db] w-[124px] h-[144px] rounded-lg p-4 text-white mt-auto mb-4 shadow-md">
           <div className="flex flex-col items-center justify-center h-full">
             <img src={inboxIcon} alt="Contact" className="w-6 h-6 mb-2" />
             <span className="text-white text-sm font-medium mb-2">Contact now</span>
@@ -92,42 +89,86 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </div>
         </div>
         
-        {/* Mobile contact button */}
-        <div className="md:hidden">
-          <button className="p-1.5 rounded-full bg-[#3498db] text-white">
-            <img src={inboxIcon} alt="Contact" className="w-4 h-4" />
-          </button>
-        </div>
-        
         {/* Config section */}
         <div className="flex items-center justify-center w-full">
-          <button className="flex items-center text-black p-2">
-            <img src={settingsIcon} alt="Settings" className="w-[15px] h-[15px] md:mr-2" />
-            <span className="hidden md:inline text-sm">Configuration</span>
-          </button>
+          <Link to="/configuration" className="flex items-center text-black">
+            <img src={settingsIcon} alt="Settings" className="w-[15px] h-[15px] mr-2" />
+            <span className="text-sm">Configuration</span>
+          </Link>
         </div>
       </div>
       
       {/* Main content */}
-      <div className="flex-1 w-[calc(100%-60px)] md:w-[calc(100%-200px)] lg:w-[calc(100%-240px)] ml-[60px] md:ml-0">
+      <div className="flex-grow flex flex-col h-screen">
         {/* Header */}
-        <header className="bg-white flex justify-between items-center py-2 md:py-3 px-2 md:px-4 shadow-sm">
-          <h1 className="font-bold text-base md:text-lg">BLUE AGENT PANEL</h1>
+        <header className="bg-white flex justify-between items-center py-3 px-4 shadow-sm">
+          <h1 className="font-bold text-lg">BLUE AGENT PANEL</h1>
           
-          <div className="flex space-x-2 md:space-x-4">
+          <div className="flex space-x-4">
+            <Link to="/settings" className="p-1">
+              <img src={settingsIcon} alt="Settings" className="w-[25px] h-[25px]" />
+            </Link>
             <button className="p-1">
-              <img src={settingsIcon} alt="Settings" className="w-[20px] md:w-[25px] h-[20px] md:h-[25px]" />
-            </button>
-            <button className="p-1">
-              <div className="w-[20px] md:w-[25px] h-[20px] md:h-[25px] bg-gray-300 rounded-full"></div>
+              <div className="w-[25px] h-[25px] bg-gray-300 rounded-full"></div>
             </button>
           </div>
         </header>
         
-        {/* Page content */}
-        <div className="overflow-y-auto bg-[#f5f7fa] p-2 md:p-4 h-[calc(100vh-56px)] md:h-[calc(100vh-64px)]">
+        {/* Page content - Ajustado para dejar espacio para la barra inferior en móvil */}
+        <div className="overflow-y-auto bg-[#f5f7fa] p-4 h-[calc(100vh-64px)] md:h-[calc(100vh-64px)] pb-16 md:pb-4">
           {children}
         </div>
+      </div>
+      
+      {/* Bottom Navigation Bar - Solo visible en móvil */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white h-16 z-20 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] flex justify-around items-center px-2">
+        <Link 
+          to="/dashboard" 
+          className={`flex flex-col items-center justify-center ${isActive('/dashboard') ? 'text-[#425ebb]' : 'text-gray-500'}`}
+        >
+          <img 
+            src={homeIcon} 
+            alt="Home" 
+            className={`w-6 h-6 ${isActive('/dashboard') ? 'opacity-100' : 'opacity-70'}`} 
+          />
+          <span className="text-xs mt-1">Home</span>
+        </Link>
+        
+        <Link 
+          to="/pipelines" 
+          className={`flex flex-col items-center justify-center ${isActive('/pipelines') ? 'text-[#425ebb]' : 'text-gray-500'}`}
+        >
+          <img 
+            src={pipelinesIcon} 
+            alt="Pipelines" 
+            className={`w-6 h-6 ${isActive('/pipelines') ? 'opacity-100' : 'opacity-70'}`} 
+          />
+          <span className="text-xs mt-1">Pipelines</span>
+        </Link>
+        
+        <Link 
+          to="/services" 
+          className={`flex flex-col items-center justify-center ${isActive('/services') ? 'text-[#425ebb]' : 'text-gray-500'}`}
+        >
+          <img 
+            src={servicesIcon} 
+            alt="Services" 
+            className={`w-6 h-6 ${isActive('/services') ? 'opacity-100' : 'opacity-70'}`} 
+          />
+          <span className="text-xs mt-1">Services</span>
+        </Link>
+        
+        <button 
+          className="flex flex-col items-center justify-center text-gray-500"
+          onClick={logout}
+        >
+          <img src={logoutIcon} alt="Logout" className="w-6 h-6 opacity-70" />
+          <span className="text-xs mt-1">Log out</span>
+        </button>
+        
+        <button className="w-10 h-10 rounded-full bg-[#3498db] flex items-center justify-center shadow-md">
+          <img src={inboxIcon} alt="Contact" className="w-5 h-5 text-white" />
+        </button>
       </div>
       
       {/* Chatbot */}
